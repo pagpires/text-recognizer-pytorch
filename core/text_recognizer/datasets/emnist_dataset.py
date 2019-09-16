@@ -8,19 +8,20 @@ import shutil
 import zipfile
 
 from boltons.cacheutils import cachedproperty
-from tensorflow.keras.utils import to_categorical
 import h5py
 import numpy as np
 import toml
 
-from text_recognizer.datasets.dataset import _download_raw_dataset, Dataset, _parse_args
+from torch.utils.data import Dataset
+from text_recognizer.datasets.dataset import _download_raw_dataset, BaseDataset, _parse_args
+from text_recognizer.util import to_categorical
 
 SAMPLE_TO_BALANCE = True  # If true, take at most the mean number of instances per class.
 
-RAW_DATA_DIRNAME = Dataset.data_dirname() / 'raw' / 'emnist'
+RAW_DATA_DIRNAME = BaseDataset.data_dirname() / 'raw' / 'emnist'
 METADATA_FILENAME = RAW_DATA_DIRNAME / 'metadata.toml'
 
-PROCESSED_DATA_DIRNAME = Dataset.data_dirname() / 'processed' / 'emnist'
+PROCESSED_DATA_DIRNAME = BaseDataset.data_dirname() / 'processed' / 'emnist'
 PROCESSED_DATA_FILENAME = PROCESSED_DATA_DIRNAME / 'byclass.h5'
 
 ESSENTIALS_FILENAME = Path(__file__).parents[0].resolve() / 'emnist_essentials.json'
@@ -53,6 +54,7 @@ class EmnistDataset(Dataset):
         self.y_test_int = None
 
     def load_or_generate_data(self):
+        # NOTE: lazy load from hdf5
         if not os.path.exists(PROCESSED_DATA_FILENAME):
             _download_and_process_emnist()
         with h5py.File(PROCESSED_DATA_FILENAME, 'r') as f:
@@ -62,6 +64,7 @@ class EmnistDataset(Dataset):
             self.y_test_int = f['y_test'][:]
         self._subsample()
 
+    # TODO: suppot subsample
     def _subsample(self):
         """Only this fraction of data will be loaded."""
         if self.subsample_fraction is None:

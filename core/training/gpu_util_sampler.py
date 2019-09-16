@@ -1,9 +1,11 @@
 """Keras callback for measuring GPU utilization."""
 import gpustat
 import numpy as np
-from tensorflow.keras.callbacks import Callback
+# from tensorflow.keras.callbacks import Callback
 
-
+# TODO: implement callback
+class Callback():
+    pass
 class GPUUtilizationSampler(Callback):
     """
     Measure GPU utilization at the end of 1% of all batches.

@@ -68,7 +68,7 @@ def run_experiment(experiment_config: Dict, save_weights: bool, gpu_ind: int, us
         dataset_args=dataset_args,
         network_args=network_args
     )
-    print(model)
+    print(model.network)
 
     experiment_config['train_args'] = {**DEFAULT_TRAIN_ARGS, **experiment_config.get('train_args', {})}
     experiment_config['experiment_group'] = experiment_config.get('experiment_group', None)
@@ -85,7 +85,6 @@ def run_experiment(experiment_config: Dict, save_weights: bool, gpu_ind: int, us
     )
     score = model.evaluate(dataset.x_test, dataset.y_test)
     print(f'Test evaluation: {score}')
-
 
     if save_weights:
         model.save_weights()

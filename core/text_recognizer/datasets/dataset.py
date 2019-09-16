@@ -6,7 +6,7 @@ import os
 from text_recognizer import util
 
 
-class Dataset:
+class BaseDataset:
     """Simple abstract class for datasets."""
     @classmethod
     def data_dirname(cls):

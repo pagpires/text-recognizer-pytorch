@@ -79,4 +79,8 @@ def download_url(url, filename):
     with TqdmUpTo(unit='B', unit_scale=True, unit_divisor=1024, miniters=1) as t:
         urlretrieve(url, filename, reporthook=t.update_to, data=None)  # nosec
 
+def to_categorical(y, num_classes):
+    """1-hot encodes a tensor"""
+    return np.eye(num_classes, dtype='uint8')[y]
+
 

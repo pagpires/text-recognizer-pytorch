@@ -1,3 +1,4 @@
+# TODO: change for line_lstm_ctc model
 import tensorflow as tf
 
 
