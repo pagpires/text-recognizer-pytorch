@@ -10,7 +10,7 @@ import numpy as np
 from text_recognizer.datasets.dataset_sequence import Dataset
 
 DIRNAME = Path(__file__).parents[1].resolve() / 'weights'
-
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class Model:
     """Base class, to be subclassed by predictors for specific type of data."""
@@ -43,15 +43,13 @@ class Model:
         if callbacks is None:
             callbacks = []
 
-        # TODO: set up optimizer, loss
-        # optimizer_type = self.optimizer()
-        # optimizer = optimizer_type(self.network.parameters())
-        # loss_fn_type = self.loss()
-        # loss_fn = loss_fn_type()
-        optimizer = optim.Adam(self.network.parameters(), lr=3e-4)
-        loss_fn = nn.BCEWithLogitsLoss()
-
+        self.network.to(device)
         self.network.train()
+
+        optimizer_class = self.optimizer()
+        optimizer = optimizer_class(self.network.parameters(), lr=3e-4) # magic Adam lr
+        loss_fn_class = self.loss()
+        loss_fn = loss_fn_class()
 
         # TODO: 2 step, assign a dataset, then convert to DataLoader()
         # modify dataset to make it contain train and test
@@ -62,6 +60,7 @@ class Model:
             augment_fn=self.batch_augment_fn,
             format_fn=self.batch_format_fn
         )
+        print("@@@@@", len(train_data))
         train_sequence = DataLoader(
             train_data,
             batch_size,
@@ -87,6 +86,8 @@ class Model:
             for i, batch in enumerate(train_sequence, 0):
                 # get the inputs; data is a list of [inputs, labels]
                 inputs, labels = batch
+                inputs = inputs.to(device)
+                labels = labels.to(device)
                 labels = torch.squeeze(labels)
 
                 # zero the parameter gradients
@@ -101,7 +102,7 @@ class Model:
                 # print statistics
                 running_loss += loss.item()
 
-            if epoch % interval == (interval-1):    # print every 2000 mini-batches
+            if epoch % interval == (interval-1):    # print every interval-epochs
                 print('[%d, %5d] loss: %.5f' %
                     (epoch + 1, i + 1, running_loss / interval))
                 running_loss = 0.0
@@ -131,10 +132,14 @@ class Model:
         with torch.no_grad():
             for batch in val_dl:
                 batch_inputs, batch_labels = batch
-                batch_labels = torch.squeeze(batch_labels, dim=1)
+                batch_inputs = batch_inputs.to(device)
+                batch_labels = torch.squeeze(batch_labels, dim=1) # no need to move label to GPU
+
                 batch_preds = self.network(batch_inputs)
-                preds.append(batch_preds)
+                preds.append(batch_preds.cpu())
                 labels.append(batch_labels)
+
+        # TODO optimize the conversion btw cpu and cuda
         preds = torch.cat(preds).numpy()
         labels = torch.cat(labels).numpy()
         
@@ -146,7 +151,7 @@ class Model:
         return nn.BCELoss
 
     def optimizer(self):  # pylint: disable=no-self-use
-        return RMSprop
+        return optim.Adam
 
     def metrics(self):  # pylint: disable=no-self-use
         return ['accuracy']
