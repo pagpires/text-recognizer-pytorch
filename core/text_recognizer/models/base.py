@@ -37,11 +37,25 @@ class Model:
         DIRNAME.mkdir(parents=True, exist_ok=True)
         return str(DIRNAME / f'{self.name}_weights.h5')
 
-    # TODO: rewrite fit
-    # dataset contains both train and test data
     def fit(self, dataset, batch_size: int = 32, epochs: int = 10, augment_val: bool = True, callbacks: list = None):
         if callbacks is None:
             callbacks = []
+
+        train_data = Dataset(
+            dataset.x_train,
+            dataset.y_train,
+            augment_fn=self.batch_augment_fn,
+            format_fn=self.batch_format_fn
+        )
+        train_sequence = DataLoader(
+            train_data,
+            batch_size,
+            shuffle=True,
+            num_workers=4
+        )
+
+        print(f"Total #training: {len(train_data)}")
+        print(f"Total #params: {sum([param.nelement() for param in self.network.parameters()])}")
 
         self.network.to(device)
         self.network.train()
@@ -50,25 +64,7 @@ class Model:
         optimizer = optimizer_class(self.network.parameters(), lr=3e-4) # magic Adam lr
         loss_fn_class = self.loss()
         loss_fn = loss_fn_class()
-
-        # TODO: 2 step, assign a dataset, then convert to DataLoader()
-        # modify dataset to make it contain train and test
-
-        train_data = Dataset(
-            dataset.x_train,
-            dataset.y_train,
-            augment_fn=self.batch_augment_fn,
-            format_fn=self.batch_format_fn
-        )
-        print("@@@@@", len(train_data))
-        train_sequence = DataLoader(
-            train_data,
-            batch_size,
-            shuffle=True,
-            num_workers=4
-        )
-
-
+        
         # TODO: prepare test dataset
         # test_sequence = DatasetSequence(
         #     dataset.x_test,
@@ -80,7 +76,7 @@ class Model:
 
         # import pdb; pdb.set_trace()
 
-        interval = 10
+        validation_interval = 4
         for epoch in range(epochs):  # loop over the dataset multiple times
             running_loss = 0.0
             for i, batch in enumerate(train_sequence, 0):
@@ -102,27 +98,15 @@ class Model:
                 # print statistics
                 running_loss += loss.item()
 
-            if epoch % interval == (interval-1):    # print every interval-epochs
-                print('[%d, %5d] loss: %.5f' %
-                    (epoch + 1, i + 1, running_loss / interval))
-                running_loss = 0.0
+            # if epoch % interval == (interval-1):    # print every interval-epochs
+            print(f"[{epoch+1}, {i+1}] loss: {running_loss/(i+1):.5f}")
 
-            # TODO: add validation
+            if epoch % validation_interval == (validation_interval-1):
+                score = self.evaluate(dataset.x_test, dataset.y_test)
+                print(f"Validation score: {score:.4f}")
         
         print('Finished Training')
-
-        # TODO: for loop to run training
-        # self.network.fit_generator(
-        #     generator=train_sequence,
-        #     epochs=epochs,
-        #     callbacks=callbacks,
-        #     validation_data=test_sequence,
-        #     use_multiprocessing=True,
-        #     workers=2,
-        #     shuffle=True
-        # )
         
-    # TODO
     def evaluate(self, x, y, batch_size=16, verbose=False):  # pylint: disable=unused-argument
         val_dl = DataLoader(Dataset(x, y), batch_size=batch_size)  # Use a small batch size to use less memory
         was_training = self.network.training

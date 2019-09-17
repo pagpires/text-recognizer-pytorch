@@ -3,5 +3,4 @@ PyTorch version of `text recognizer` from https://github.com/pagpires/fsdl-text-
 
 ### Next TODO
 1. latent data loader (need to keep `to_categorical`)
-2. GPU
-3. validation module
+2. validation module and loss plot
