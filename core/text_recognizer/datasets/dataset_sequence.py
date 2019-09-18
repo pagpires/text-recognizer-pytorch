@@ -29,13 +29,6 @@ class Dataset(data.Dataset):
         return len(self.x)
 
     def __getitem__(self, idx):
-        # """Return a single batch."""
-        # # idx = 0  # If you want to intentionally overfit to just one batch
-        # begin = idx * self.batch_size
-        # end = (idx + 1) * self.batch_size
-
-        # batch_x = np.take(self.x, range(begin, end), axis=0, mode='clip')
-        # batch_y = np.take(self.y, range(begin, end), axis=0, mode='clip')
 
         x = torch.from_numpy(self.x[idx, :])
         y = torch.from_numpy(self.y[idx, :]).float()

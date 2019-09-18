@@ -65,17 +65,6 @@ class Model:
         loss_fn_class = self.loss()
         loss_fn = loss_fn_class()
         
-        # TODO: prepare test dataset
-        # test_sequence = DatasetSequence(
-        #     dataset.x_test,
-        #     dataset.y_test,
-        #     batch_size,
-        #     augment_fn=self.batch_augment_fn if augment_val else None,
-        #     format_fn=self.batch_format_fn
-        # )
-
-        # import pdb; pdb.set_trace()
-
         validation_interval = 4
         for epoch in range(epochs):  # loop over the dataset multiple times
             running_loss = 0.0
@@ -107,8 +96,8 @@ class Model:
         
         print('Finished Training')
         
-    def evaluate(self, x, y, batch_size=16, verbose=False):  # pylint: disable=unused-argument
-        val_dl = DataLoader(Dataset(x, y), batch_size=batch_size)  # Use a small batch size to use less memory
+    def evaluate(self, x, y, batch_size=16, verbose=False):
+        val_dl = DataLoader(Dataset(x, y), batch_size=batch_size)
         was_training = self.network.training
         self.network.eval()
         preds = []
@@ -131,13 +120,13 @@ class Model:
             self.network.train()
         return np.mean(np.argmax(preds, -1) == np.argmax(labels, -1))
 
-    def loss(self):  # pylint: disable=no-self-use
+    def loss(self):
         return nn.BCELoss
 
-    def optimizer(self):  # pylint: disable=no-self-use
+    def optimizer(self):
         return optim.Adam
 
-    def metrics(self):  # pylint: disable=no-self-use
+    def metrics(self):
         return ['accuracy']
 
     def load_weights(self):

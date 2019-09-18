@@ -54,7 +54,7 @@ class EmnistDataset(Dataset):
         self.y_test_int = None
 
     def load_or_generate_data(self):
-        # NOTE: lazy load from hdf5
+        # NOTE: gave up lazy load from hdf5, its io from Dataset() seems very slow
         if not os.path.exists(PROCESSED_DATA_FILENAME):
             _download_and_process_emnist()
         with h5py.File(PROCESSED_DATA_FILENAME, 'r') as f:
