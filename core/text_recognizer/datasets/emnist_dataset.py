@@ -12,16 +12,15 @@ import h5py
 import numpy as np
 import toml
 
-from torch.utils.data import Dataset
-from text_recognizer.datasets.dataset import _download_raw_dataset, BaseDataset, _parse_args
+from text_recognizer.datasets.dataset import _download_raw_dataset, Dataset, _parse_args
 from text_recognizer.util import to_categorical
 
 SAMPLE_TO_BALANCE = True  # If true, take at most the mean number of instances per class.
 
-RAW_DATA_DIRNAME = BaseDataset.data_dirname() / 'raw' / 'emnist'
+RAW_DATA_DIRNAME = Dataset.data_dirname() / 'raw' / 'emnist'
 METADATA_FILENAME = RAW_DATA_DIRNAME / 'metadata.toml'
 
-PROCESSED_DATA_DIRNAME = BaseDataset.data_dirname() / 'processed' / 'emnist'
+PROCESSED_DATA_DIRNAME = Dataset.data_dirname() / 'processed' / 'emnist'
 PROCESSED_DATA_FILENAME = PROCESSED_DATA_DIRNAME / 'byclass.h5'
 
 ESSENTIALS_FILENAME = Path(__file__).parents[0].resolve() / 'emnist_essentials.json'

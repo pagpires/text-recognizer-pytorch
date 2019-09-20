@@ -13,7 +13,7 @@ from torch.utils import data
 # https://www.tinymind.com/learn/terms/hdf5#pytorch
 # complex version: https://towardsdatascience.com/hdf5-datasets-for-pytorch-631ff1d750f5
 # Dataset detail https://stanford.edu/~shervine/blog/pytorch-how-to-generate-data-parallel
-class Dataset(data.Dataset):
+class CustomDataset(data.Dataset):
     """
     Minimal implementation of https://keras.io/utils/#sequence.
     Allows easy use of fit_generator in training.
@@ -47,3 +47,7 @@ class Dataset(data.Dataset):
             batch_x, batch_y = self.format_fn(batch_x, batch_y)
 
         return x, y
+
+def DatasetSequence(x, y, batch_size=32, augment_fn=None, format_fn=None):
+    dl = data.DataLoader(CustomDataset(x, y, augment_fn=augment_fn, format_fn=format_fn), batch_size=batch_size, shuffle=True, num_workers=4)
+    return dl

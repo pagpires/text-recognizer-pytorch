@@ -4,10 +4,9 @@ from typing import Callable, Dict, Optional
 
 import torch
 from torch import nn, optim
-from torch.utils.data import DataLoader
 import numpy as np
 
-from text_recognizer.datasets.dataset_sequence import Dataset
+from text_recognizer.datasets.dataset_sequence import DatasetSequence
 
 DIRNAME = Path(__file__).parents[1].resolve() / 'weights'
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -41,20 +40,24 @@ class Model:
         if callbacks is None:
             callbacks = []
 
-        train_data = Dataset(
-            dataset.x_train,
-            dataset.y_train,
-            augment_fn=self.batch_augment_fn,
-            format_fn=self.batch_format_fn
-        )
-        train_sequence = DataLoader(
-            train_data,
-            batch_size,
-            shuffle=True,
-            num_workers=4
+        # train_data = Dataset(
+        #     dataset.x_train,
+        #     dataset.y_train,
+        #     augment_fn=self.batch_augment_fn,
+        #     format_fn=self.batch_format_fn
+        # )
+        # train_sequence = DataLoader(
+        #     train_data,
+        #     batch_size,
+        #     shuffle=True,
+        #     num_workers=4
+        # )
+        train_sequence = DatasetSequence(
+            dataset.x_train, dataset.y_train, 
+            batch_size=batch_size, augment_fn=self.batch_augment_fn, format_fn=self.batch_format_fn
         )
 
-        print(f"Total #training: {len(train_data)}")
+        print(f"Total #training: {len(train_sequence.dataset)}")
         print(f"Total #params: {sum([param.nelement() for param in self.network.parameters()])}")
 
         self.network.to(device)
@@ -97,7 +100,7 @@ class Model:
         print('Finished Training')
         
     def evaluate(self, x, y, batch_size=16, verbose=False):
-        val_dl = DataLoader(Dataset(x, y), batch_size=batch_size)
+        val_dl = DatasetSequence(x, y, batch_size=batch_size)
         was_training = self.network.training
         self.network.eval()
         preds = []
