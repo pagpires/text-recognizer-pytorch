@@ -32,6 +32,7 @@ class CustomDataset(data.Dataset):
 
         x = torch.from_numpy(self.x[idx, :])
         y = torch.from_numpy(self.y[idx, :]).float()
+        # y = torch.from_numpy(np.argmax(self.y[idx, :], axis=-1)).long()
 
         if x.dtype == torch.uint8:
             # NOTE should tensor.to(float) before division
