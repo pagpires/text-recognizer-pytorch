@@ -44,7 +44,8 @@ def line_cnn_all_conv(
             width = int(self.num_windows / output_length)
             self.l3 = nn.Sequential(*[
                 nn.Conv2d(1, num_classes, (width, 128), (width, 1)),
-                nn.Softmax(dim=1)
+                # nn.Softmax(dim=1)
+                nn.LogSoftmax(dim=1)
             ])
             # (batch, num_classes, image_width/width, 1)
             # reshape to (batch, max_length, num_classes)
@@ -61,7 +62,7 @@ def line_cnn_all_conv(
             x = torch.squeeze(x, dim=3)
             # (batch, num_classes, image_width/width)
             x = x[:, :, :output_length]
-            x = x.permute(0, 2, 1)
+            # x = x.permute(0, 2, 1)
             return x
     
     model = LineCNN()

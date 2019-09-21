@@ -9,15 +9,17 @@ import os
 from training.util import train_model
 
 
+# NOTE should be consistent with base.fit()
 DEFAULT_TRAIN_ARGS = {
-    'batch_size': 64,
-    'epochs': 16
+    'batch_size': 32,
+    'epochs': 10
 }
 
 
 def run_experiment(experiment_config: Dict, save_weights: bool, gpu_ind: int, use_wandb: bool = True):
     """
     Run a training experiment.
+    For defaults see: base.fit, network, 
 
     Parameters
     ----------

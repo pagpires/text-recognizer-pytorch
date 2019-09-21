@@ -31,8 +31,9 @@ class CustomDataset(data.Dataset):
     def __getitem__(self, idx):
 
         x = torch.from_numpy(self.x[idx, :])
-        y = torch.from_numpy(self.y[idx, :]).float()
-        # y = torch.from_numpy(np.argmax(self.y[idx, :], axis=-1)).long()
+        # TODO decide whether to keep one-hot-encoding or scalar class, or a dataLoader for each dataset
+        # TODO this works for lab2-emnist y = torch.from_numpy(self.y[idx, :]).float()
+        y = torch.from_numpy(np.argmax(self.y[idx, :], axis=-1)).long()
 
         if x.dtype == torch.uint8:
             # NOTE should tensor.to(float) before division

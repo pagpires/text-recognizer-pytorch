@@ -35,7 +35,6 @@ def train_model(
     # print(model.network)
 
     t = time()
-    # TODO: should implement .fit() method, 
     _history = model.fit(dataset=dataset, batch_size=batch_size, epochs=epochs, callbacks=callbacks)
     print('Training took {:2f} s'.format(time() - t))
 

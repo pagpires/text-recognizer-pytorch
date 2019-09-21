@@ -72,7 +72,7 @@ class Model:
         for epoch in range(epochs):  # loop over the dataset multiple times
             running_loss = 0.0
             for i, batch in enumerate(train_sequence, 0):
-                # get the inputs; data is a list of [inputs, labels]
+
                 inputs, labels = batch
                 inputs = inputs.to(device)
                 labels = labels.to(device)
