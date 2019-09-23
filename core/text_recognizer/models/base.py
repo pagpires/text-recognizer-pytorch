@@ -94,6 +94,7 @@ class Model:
             print(f"[{epoch+1}, {i+1}] loss: {running_loss/(i+1):.5f}")
 
             if epoch % validation_interval == (validation_interval-1):
+                # score = self.evaluate(dataset.x_train, dataset.y_train, verbose=False)
                 score = self.evaluate(dataset.x_test, dataset.y_test)
                 print(f"Validation score: {score:.4f}")
         

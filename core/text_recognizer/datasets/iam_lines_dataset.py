@@ -7,7 +7,6 @@ We will look at how to generate processed data from raw IAM data in the IamParag
 
 from boltons.cacheutils import cachedproperty
 import h5py
-from tensorflow.keras.utils import to_categorical
 
 from text_recognizer import util
 from text_recognizer.datasets.dataset import Dataset, _parse_args
@@ -64,12 +63,14 @@ class IamLinesDataset(Dataset):
     @cachedproperty
     def y_train(self):
         """Return y_train"""
-        return to_categorical(self.y_train_int, self.num_classes)
+        return util.to_categorical(self.y_train_int, self.num_classes)
+        # return self.y_train_int
 
     @cachedproperty
     def y_test(self):
         """Return y_test"""
-        return to_categorical(self.y_test_int, self.num_classes)
+        return util.to_categorical(self.y_test_int, self.num_classes)
+        # return self.y_test_int
 
     def __repr__(self):
         """Print info about the dataset."""
