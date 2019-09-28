@@ -89,7 +89,7 @@ class LineDetectorModel(Model):
         was_training = self.network.training
         self.network.eval()
         with torch.no_grad():
-            pred = self.network(torch.from_numpy(x).unsqueeze(0).to(device))[0].cpu()
+            pred = self.network(torch.from_numpy(x).unsqueeze(0).to(device))[0].cpu().numpy()
         if was_training:
             self.network.train()
 

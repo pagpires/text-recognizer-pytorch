@@ -143,6 +143,7 @@ class Model:
     def load_weights(self):
         params = torch.load(self.weights_filename, map_location=lambda storage, loc: storage)
         self.network.load_state_dict(params['state_dict'])
+        self.network.to(device)
 
     def save_weights(self):
         print(f'save model parameters to [{self.weights_filename}]')
