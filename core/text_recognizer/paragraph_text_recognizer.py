@@ -29,7 +29,7 @@ class ParagraphTextRecognizer:
             image = image_or_filename
 
         line_region_crops = self._get_line_region_crops(image=image)
-        print([a.shape for a in line_region_crops])
+        print(f"Cropped shapes:\n{[a.shape for a in line_region_crops]}")
         prepared_line_region_crops = [
             self._prepare_image_for_line_predictor_model(image=crop)
             for crop in line_region_crops
@@ -45,6 +45,8 @@ class ParagraphTextRecognizer:
         """Find all the line regions in square image and crop them out and return them."""
         prepared_image, scale_down_factor = self._prepare_image_for_line_detector_model(image)
         line_segmentation = self.line_detector_model.predict_on_image(prepared_image)
+        # swap dim_channel to last
+        line_segmentation = np.transpose(line_segmentation, (1,2,0))
         bounding_boxes_xywh = _find_line_bounding_boxes(line_segmentation)
 
         bounding_boxes_xywh = (bounding_boxes_xywh * scale_down_factor).astype(int)
@@ -77,7 +79,8 @@ class ParagraphTextRecognizer:
 
         pad_width = ((0, expected_shape[0] - scaled_image.shape[0]), (0, expected_shape[1] - scaled_image.shape[1]))
         padded_image = np.pad(scaled_image, pad_width=pad_width, mode='constant', constant_values=255)
-        return 1 - padded_image / 255
+        prepared_image = (1 - padded_image / 255).astype('float32') # black background and np.float32, both to compatible with prediction model
+        return  prepared_image
 
 
 def _find_line_bounding_boxes(line_segmentation: np.ndarray):

@@ -95,9 +95,10 @@ class LineModel(Model):
         with torch.no_grad():
             was_training = self.network.training
             self.network.eval()
-            pred_raw = self.network(image).squeeze()
+            pred_raw = self.network(image).squeeze(dim=0).cpu().numpy()
             if was_training:
                 self.network.train()
-        pred = ''.join(self.data.mapping[label] for label in np.argmax(pred_raw, axis=-1).flatten()).strip()
-        conf = np.min(np.max(pred_raw, axis=-1))  # The least confident of the predictions.
+        # pred_raw: (num_classes, output_length)
+        pred = ''.join(self.data.mapping[label] for label in np.argmax(pred_raw, axis=0).flatten()).strip(' |_')
+        conf = np.min(np.max(pred_raw, axis=0))  # The least confident of the predictions.
         return pred, conf

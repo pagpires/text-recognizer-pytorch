@@ -18,9 +18,8 @@ class TestParagraphTextRecognizer(unittest.TestCase):
         num_text_lines_by_name = {
             'a01-000u-cropped': 7
         }
-        print('@@@@@@')
         for filename in (SUPPORT_DIRNAME).glob('*.jpg'):
             full_image = util.read_image(str(filename), grayscale=True)
             predicted_text, line_region_crops = predictor.predict(full_image)
-            print(predicted_text)
+            print(f"ouptut text {predicted_text}")
             assert len(line_region_crops) == num_text_lines_by_name[filename.stem]
