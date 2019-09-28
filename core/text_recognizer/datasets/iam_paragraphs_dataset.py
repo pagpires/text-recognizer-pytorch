@@ -1,6 +1,5 @@
 """IamParagraphsDataset class and functions for data processing."""
 from boltons.cacheutils import cachedproperty
-from tensorflow.keras.utils import to_categorical
 import cv2
 import numpy as np
 
@@ -44,8 +43,8 @@ class IamParagraphsDataset(Dataset):
             self._process_iam_paragraphs()
 
         self.x, self.y, self.ids = _load_iam_paragraphs()
-        self.train_ind, self.test_ind = _get_random_split(self.x.shape[0])
         self._subsample()
+        self.train_ind, self.test_ind = _get_random_split(self.x.shape[0])
 
     @cachedproperty
     def x_train(self):
@@ -205,7 +204,7 @@ def _load_iam_paragraphs():
         gt_images.append(gt_image)
         ids.append(id_)
     images = np.array(images).astype(np.float32)
-    gt_images = to_categorical(np.array(gt_images), 3).astype(np.uint8)
+    gt_images = util.to_categorical(np.array(gt_images), 3).astype(np.uint8)
     return images, gt_images, np.array(ids)
 
 

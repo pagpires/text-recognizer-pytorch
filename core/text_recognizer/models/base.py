@@ -53,6 +53,7 @@ class Model:
         #     num_workers=4
         # )
         train_sequence = DatasetSequence(
+            # dataset.x_train[:5], dataset.y_train[:5],  # @@@
             dataset.x_train, dataset.y_train, 
             batch_size=batch_size, augment_fn=self.batch_augment_fn, format_fn=self.batch_format_fn
         )
@@ -68,7 +69,9 @@ class Model:
         loss_fn_class = self.loss()
         loss_fn = loss_fn_class()
         
-        validation_interval = 4
+        # validation_interval = 4
+        # total_loss = [] #@@@@
+        validation_interval = 1 #@@@
         for epoch in range(epochs):  # loop over the dataset multiple times
             running_loss = 0.0
             for i, batch in enumerate(train_sequence, 0):
@@ -89,16 +92,20 @@ class Model:
 
                 # print statistics
                 running_loss += loss.item()
+                # total_loss.append(loss.item()) #@@@@
 
             # if epoch % interval == (interval-1):    # print every interval-epochs
             print(f"[{epoch+1}, {i+1}] loss: {running_loss/(i+1):.5f}")
 
             if epoch % validation_interval == (validation_interval-1):
-                # score = self.evaluate(dataset.x_train, dataset.y_train, verbose=False)
+                # score = self.evaluate(dataset.x_train[:5], dataset.y_train[:5], verbose=False) #@@@
                 score = self.evaluate(dataset.x_test, dataset.y_test)
                 print(f"Validation score: {score:.4f}")
         
         print('Finished Training')
+        # import matplotlib.pyplot as plt #@@@@
+        # plt.plot(total_loss) #@@@@
+        # plt.show()
         
     def evaluate(self, x, y, batch_size=16, verbose=False):
         val_dl = DatasetSequence(x, y, batch_size=batch_size)

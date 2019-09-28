@@ -29,24 +29,31 @@ class CustomDataset(data.Dataset):
         return len(self.x)
 
     def __getitem__(self, idx):
+        x = self.x[idx, :]
+        # y = torch.from_numpy(np.argmax(self.y[idx, :], axis=-1)).long()
+        y = np.argmax(self.y[idx, :], axis=-1).astype(np.uint8)
 
-        x = torch.from_numpy(self.x[idx, :])
+        if self.augment_fn:
+            # read and transformed e2e by transforms
+            # do not include ToTensor otherwise y will be rescaled
+            # keep io in numpy array
+            # BUG this should happen together!!!
+            x, y = self.augment_fn(x, y)
+            x = np.array(x)
+            y = np.array(y)
+            
+        x = torch.from_numpy(x)
         # TODO decide whether to keep one-hot-encoding or scalar class, or a dataLoader for each dataset
         # TODO this works for lab2-emnist y = torch.from_numpy(self.y[idx, :]).float()
-        y = torch.from_numpy(np.argmax(self.y[idx, :], axis=-1)).long()
 
         if x.dtype == torch.uint8:
             # NOTE should tensor.to(float) before division
             x = (x.to(torch.float32) / 255)
-
-        # TODO: how does the transformation apply to each sample
-        # NOTE this function takes two inputs
-        if self.augment_fn:
-            batch_x, batch_y = self.augment_fn(batch_x, batch_y)
+        y = torch.from_numpy(y).long()
 
         # TODO: 
         if self.format_fn:
-            batch_x, batch_y = self.format_fn(batch_x, batch_y)
+            x, y = self.format_fn(x, y)
 
         return x, y
 
