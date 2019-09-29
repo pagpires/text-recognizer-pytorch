@@ -10,7 +10,6 @@ from text_recognizer.models.base import Model
 from text_recognizer.networks.line_lstm_ctc import line_lstm_ctc
 
 
-# TODO: implement PyTorch LineModelCTC
 class LineModelCtc(Model):
     """Model for recognizing handwritten text in an image of a line, using CTC loss/decoding."""
     def __init__(self,
