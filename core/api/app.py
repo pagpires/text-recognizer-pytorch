@@ -6,8 +6,8 @@ except ImportError:
     pass
 
 from flask import Flask, request, jsonify
-from tensorflow.keras import backend
-import tensorflow as tf
+# from tensorflow.keras import backend
+# import tensorflow as tf
 
 from text_recognizer.line_predictor import LinePredictor
 # from text_recognizer.datasets import IamLinesDataset
@@ -15,10 +15,13 @@ import text_recognizer.util as util
 
 app = Flask(__name__)  # pylint: disable=invalid-name
 
-# Tensorflow bug: https://github.com/keras-team/keras/issues/2397
-with backend.get_session().graph.as_default() as _:
-    predictor = LinePredictor()  # pylint: disable=invalid-name
-    # predictor = LinePredictor(dataset_cls=IamLinesDataset)
+# # Tensorflow bug: https://github.com/keras-team/keras/issues/2397
+# with backend.get_session().graph.as_default() as _:
+#     predictor = LinePredictor()  # pylint: disable=invalid-name
+#     # predictor = LinePredictor(dataset_cls=IamLinesDataset)
+
+# init predictor
+predictor = LinePredictor()
 
 
 @app.route('/')
@@ -29,11 +32,11 @@ def index():
 @app.route('/v1/predict', methods=['GET', 'POST'])
 def predict():
     image = _load_image()
-    with backend.get_session().graph.as_default() as _:
-        pred, conf = predictor.predict(image)
-        print("METRIC confidence {}".format(conf))
-        print("METRIC mean_intensity {}".format(image.mean()))
-        print("INFO pred {}".format(pred))
+    # with backend.get_session().graph.as_default() as _:
+    pred, conf = predictor.predict(image)
+    print("METRIC confidence {}".format(conf))
+    print("METRIC mean_intensity {}".format(image.mean()))
+    print("INFO pred {}".format(pred))
     return jsonify({'pred': str(pred), 'conf': float(conf)})
 
 
