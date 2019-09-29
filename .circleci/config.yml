@@ -1,0 +1,69 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6.7
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - cache-{{ checksum "Pipfile.lock" }}
+
+      - run:
+          name: Install Git LFS
+          command: |
+            curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+            sudo apt-get install git-lfs
+            git lfs install
+
+      - run:
+          name: Pull LFS Files
+          command: git lfs pull
+
+      - run:
+          name: Install Shellcheck
+          command: |
+            curl -OL https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz
+            tar xf shellcheck-stable.linux.x86_64.tar.xz
+            sudo mv shellcheck-stable/shellcheck /usr/local/bin
+          working_directory: /tmp/shellcheck
+
+      - run:
+          name: install dependencies
+          command: |
+            sudo pip install --upgrade pip
+            sudo pip install pipenv
+            sed -i 's/tensorflow-gpu/tensorflow/' Pipfile
+            pipenv install --dev
+
+      - save_cache:
+          key: cache-{{ checksum "Pipfile.lock" }}
+          paths:
+            - ~/.local
+
+      - run:
+          name: run linting
+          when: always
+          command: |
+            cd lab9 && PYTHONPATH=. ./tasks/lint.sh
+
+      - run:
+          name: run prediction tests
+          when: always
+          command: |
+            cd lab9 && PYTHONPATH=. pipenv run pytest -s text_recognizer/tests/*
+
+      - run:
+          name: run evaluation tests
+          command: |
+            cd lab9 && PYTHONPATH=. pipenv run pytest -s evaluation/*
+
+      - store_artifacts:
+          path: test-reports
+          destination: test-reports
