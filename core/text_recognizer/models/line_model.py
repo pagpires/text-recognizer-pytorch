@@ -52,7 +52,7 @@ class LineModel(Model):
 
             preds_raw = torch.cat(preds_raw).numpy()
             # transform labels from scalar to original one-hot-encoding shape
-            labels_raw = to_categorical(torch.cat(labels_raw).numpy(), num_classes)
+            # labels_raw = to_categorical(torch.cat(labels_raw).numpy(), num_classes)
             print(f"Evaluation loss: {running_loss/(i+1)}")
             if was_training:
                 self.network.train()
@@ -61,7 +61,8 @@ class LineModel(Model):
         # NOTE trues.shape: (batch, output_length, num_classes)
         # NOTE preds_raw.shape = (batch, num_classes, output_length)
         # NOTE keras is nhwc so np.argmax(dim=-1), accordingly pytorch is nchw so np.argmax(dim=1)
-        trues = np.argmax(labels_raw, -1)
+        # trues = np.argmax(labels_raw, -1)
+        trues = torch.cat(labels_raw).numpy()
         preds = np.argmax(preds_raw, 1)
         pred_strings = [''.join(self.data.mapping.get(label, '') for label in pred).strip(' |_') for pred in preds]
         true_strings = [''.join(self.data.mapping.get(label, '') for label in true).strip(' |_') for true in trues]
@@ -100,5 +101,5 @@ class LineModel(Model):
                 self.network.train()
         # pred_raw: (num_classes, output_length)
         pred = ''.join(self.data.mapping[label] for label in np.argmax(pred_raw, axis=0).flatten()).strip(' |_')
-        conf = np.min(np.max(pred_raw, axis=0))  # The least confident of the predictions.
+        conf = np.exp(np.min(np.max(pred_raw, axis=0)))  # The least confident of the predictions.
         return pred, conf

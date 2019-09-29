@@ -69,9 +69,9 @@ class Model:
         loss_fn_class = self.loss()
         loss_fn = loss_fn_class()
         
-        # validation_interval = 4
+        validation_interval = 4
         # total_loss = [] #@@@@
-        validation_interval = 1 #@@@
+        # validation_interval = 1 #@@@
         for epoch in range(epochs):  # loop over the dataset multiple times
             running_loss = 0.0
             for i, batch in enumerate(train_sequence, 0):

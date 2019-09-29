@@ -7,7 +7,8 @@ import cv2
 import numpy as np
 from text_recognizer.datasets import IamLinesDataset
 from text_recognizer.models.line_detector_model import LineDetectorModel
-from text_recognizer.models.line_model_ctc import LineModelCtc
+from text_recognizer.models.line_model import LineModel
+# from text_recognizer.models.line_model_ctc import LineModelCtc
 import text_recognizer.util as util
 
 
@@ -16,7 +17,8 @@ class ParagraphTextRecognizer:
     def __init__(self):
         self.line_detector_model = LineDetectorModel()
         self.line_detector_model.load_weights()
-        self.line_predictor_model = LineModelCtc(dataset_cls=IamLinesDataset)
+        self.line_predictor_model = LineModel(dataset_cls=IamLinesDataset)
+        # self.line_predictor_model = LineModelCtc(dataset_cls=IamLinesDataset)
         self.line_predictor_model.load_weights()
 
     def predict(self, image_or_filename: Union[np.ndarray, str]):
@@ -45,8 +47,8 @@ class ParagraphTextRecognizer:
         """Find all the line regions in square image and crop them out and return them."""
         prepared_image, scale_down_factor = self._prepare_image_for_line_detector_model(image)
         line_segmentation = self.line_detector_model.predict_on_image(prepared_image)
-        # swap dim_channel to last
-        line_segmentation = np.transpose(line_segmentation, (1,2,0))
+        # swap dim_channel to last, and transform from LogSoftMax to SoftMax (required by _find_line_bounding_boxes)
+        line_segmentation = np.transpose(np.exp(line_segmentation), (1,2,0))
         bounding_boxes_xywh = _find_line_bounding_boxes(line_segmentation)
 
         bounding_boxes_xywh = (bounding_boxes_xywh * scale_down_factor).astype(int)
