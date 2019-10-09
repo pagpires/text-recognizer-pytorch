@@ -1,0 +1,1 @@
+python training/run_experiment.py --save '{"dataset": "IamLinesDataset", "model": "LineModelCRNN", "network": "line_crnn", "train_args": {"batch_size": 96, "epochs": 30, "pretrained": true}}'

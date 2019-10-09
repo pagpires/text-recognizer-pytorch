@@ -190,3 +190,33 @@ class LineModelCtc(Model):
             self.network.train()
 
         return pred, conf
+
+class LineModelCRNN(LineModelCtc):
+    """Model for recognizing handwritten text in an image of a line, using CTC loss/decoding."""
+    def __init__(self,
+                 dataset_cls: type = EmnistLinesDataset,
+                 network_fn: Callable = line_crnn,
+                 dataset_args: Dict = None,
+                 network_args: Dict = None):
+        """Define the default dataset and network values for this model."""
+        default_dataset_args: dict = {}
+        if dataset_args is None:
+            dataset_args = {}
+        dataset_args = {**default_dataset_args, **dataset_args}
+
+        if network_args is None:
+            network_args = {}
+        
+        # Model.__init__()
+        self.name = f'{self.__class__.__name__}_{dataset_cls.__name__}_{network_fn.__name__}'
+
+        if dataset_args is None:
+            dataset_args = {}
+        self.data = dataset_cls(**dataset_args)
+
+        if network_args is None:
+            network_args = {}
+        self.network = network_fn(self.data.input_shape, self.data.output_shape, **network_args)
+
+        self.batch_augment_fn: Optional[Callable] = None
+        self.batch_format_fn: Optional[Callable] = None
