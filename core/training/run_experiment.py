@@ -73,6 +73,7 @@ def run_experiment(experiment_config: Dict, save_weights: bool, gpu_ind: int, us
     print(model.network)
 
     experiment_config['train_args'] = {**DEFAULT_TRAIN_ARGS, **experiment_config.get('train_args', {})}
+    experiment_config['minor_train_args'] = {k:v for k,v in experiment_config['train_args'].items() if k not in ('epochs', 'batch_size')}
     experiment_config['experiment_group'] = experiment_config.get('experiment_group', None)
     experiment_config['gpu_ind'] = gpu_ind
 
@@ -83,7 +84,8 @@ def run_experiment(experiment_config: Dict, save_weights: bool, gpu_ind: int, us
         epochs=experiment_config['train_args']['epochs'],
         batch_size=experiment_config['train_args']['batch_size'],
         gpu_ind=gpu_ind,
-        use_wandb=use_wandb
+        use_wandb=use_wandb,
+        **experiment_config['minor_train_args']
     )
     score = model.evaluate(dataset.x_test, dataset.y_test)
     print(f'Test evaluation: {score}')

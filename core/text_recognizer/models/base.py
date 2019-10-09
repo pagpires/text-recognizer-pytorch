@@ -39,19 +39,7 @@ class Model:
     def fit(self, dataset, batch_size: int = 32, epochs: int = 10, augment_val: bool = True, callbacks: list = None):
         if callbacks is None:
             callbacks = []
-
-        # train_data = Dataset(
-        #     dataset.x_train,
-        #     dataset.y_train,
-        #     augment_fn=self.batch_augment_fn,
-        #     format_fn=self.batch_format_fn
-        # )
-        # train_sequence = DataLoader(
-        #     train_data,
-        #     batch_size,
-        #     shuffle=True,
-        #     num_workers=4
-        # )
+        
         train_sequence = DatasetSequence(
             # dataset.x_train[:5], dataset.y_train[:5],  # @@@
             dataset.x_train, dataset.y_train, 
@@ -94,7 +82,6 @@ class Model:
                 running_loss += loss.item()
                 # total_loss.append(loss.item()) #@@@@
 
-            # if epoch % interval == (interval-1):    # print every interval-epochs
             print(f"[{epoch+1}, {i+1}] loss: {running_loss/(i+1):.5f}")
 
             if epoch % validation_interval == (validation_interval-1):
@@ -123,7 +110,6 @@ class Model:
                 preds.append(batch_preds.cpu())
                 labels.append(batch_labels)
 
-        # TODO optimize the conversion btw cpu and cuda
         preds = torch.cat(preds).numpy()
         labels = torch.cat(labels).numpy()
         

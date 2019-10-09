@@ -19,7 +19,8 @@ def train_model(
         epochs: int,
         batch_size: int,
         gpu_ind: Optional[int] = None,
-        use_wandb: bool = False) -> Model:
+        use_wandb: bool = False,
+        **train_args) -> Model:
     """Train model."""
     callbacks = []
 
@@ -35,7 +36,7 @@ def train_model(
     # print(model.network)
 
     t = time()
-    _history = model.fit(dataset=dataset, batch_size=batch_size, epochs=epochs, callbacks=callbacks)
+    _history = model.fit(dataset=dataset, batch_size=batch_size, epochs=epochs, callbacks=callbacks, **train_args)
     print('Training took {:2f} s'.format(time() - t))
 
     # TODO: util functions

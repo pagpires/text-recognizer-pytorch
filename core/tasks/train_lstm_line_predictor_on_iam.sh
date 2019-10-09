@@ -1,2 +1,2 @@
 #!/bin/bash
-python training/run_experiment.py --save '{"dataset": "IamLinesDataset", "model": "LineModelCtc", "network": "line_lstm_ctc"}'
+python training/run_experiment.py --save '{"dataset": "IamLinesDataset", "model": "LineModelCtc", "network": "line_lstm_ctc", "network_args": {"window_width": 14, "window_stride": 5}, "train_args": {"batch_size": 64, "epochs": 30, "pretrained": true}}'
