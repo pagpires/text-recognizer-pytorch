@@ -45,7 +45,6 @@ jobs:
             sudo pip install --upgrade pip
             conda update conda
             conda env create -f env_pytorch.yml
-            conda activate py36pytorch
 
       - save_cache:
           key: cache-{{ checksum "env_pytorch.yml" }}
@@ -62,11 +61,13 @@ jobs:
           name: run prediction tests
           when: always
           command: |
+            conda activate py36pytorch
             cd core && PYTHONPATH=. pytest -s text_recognizer/tests/*
 
       - run:
           name: run evaluation tests
           command: |
+            conda activate py36pytorch
             cd core && PYTHONPATH=. pytest -s evaluation/*
 
       - store_artifacts:
