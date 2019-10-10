@@ -45,6 +45,7 @@ jobs:
             sudo pip install --upgrade pip
             conda update conda
             conda env create -f env_pytorch.yml
+            conda activate py36pytorch
 
       - save_cache:
           key: cache-{{ checksum "env_pytorch.yml" }}
