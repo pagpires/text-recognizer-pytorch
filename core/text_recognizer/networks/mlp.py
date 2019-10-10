@@ -31,7 +31,7 @@ def mlp(input_shape: Tuple[int, ...],
                 layers.append(nn.ReLU())
                 layers.append(nn.Dropout(dropout_amount))
             layers.append(nn.Linear(layer_size, num_classes))
-            layers.append(nn.Softmax(dim=1))
+            layers.append(nn.LogSoftmax(dim=1))
             # NOTE need Softmax() for BCELoss, but not for CrossEntropyLoss
             self.layers = nn.Sequential(*layers)
         

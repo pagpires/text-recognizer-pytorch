@@ -12,6 +12,7 @@ from text_recognizer.datasets.dataset_sequence import DatasetSequence
 from text_recognizer.datasets import EmnistLinesDataset
 from text_recognizer.models.base import Model
 from text_recognizer.networks.line_lstm_ctc import line_lstm_ctc
+from text_recognizer.networks.line_crnn import line_crnn
 from text_recognizer.networks.ctc import ctc_decode
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

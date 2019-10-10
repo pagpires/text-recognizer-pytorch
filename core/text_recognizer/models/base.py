@@ -111,14 +111,14 @@ class Model:
                 labels.append(batch_labels)
 
         preds = torch.cat(preds).numpy()
-        labels = torch.cat(labels).numpy()
+        labels = torch.cat(labels).numpy() # (B,)
         
         if was_training:
             self.network.train()
-        return np.mean(np.argmax(preds, -1) == np.argmax(labels, -1))
+        return np.mean(np.argmax(preds, -1) == labels)
 
     def loss(self):
-        return nn.BCELoss
+        return nn.NLLLoss
 
     def optimizer(self):
         return optim.Adam
