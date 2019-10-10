@@ -6,7 +6,7 @@ import numpy as np
 
 import torch
 from torch import nn
-from torch_baidu_ctc import CTCLoss
+# from torch_baidu_ctc import CTCLoss
 
 from text_recognizer.datasets.dataset_sequence import DatasetSequence
 from text_recognizer.datasets import EmnistLinesDataset
@@ -56,7 +56,7 @@ class LineModelCtc(Model):
 
         optimizer = self.optimizer()(self.network.parameters(), lr=3e-4) # RMSProp is better than Adam in this case
         blank_idx = self.data.num_classes-1
-        loss_fn = self.loss()(blank=blank_idx, reduction='mean', average_frames=True)
+        loss_fn = self.loss()(blank=blank_idx, reduction='mean')
         
         validation_interval = 5
         score = self.evaluate(dataset.x_test, dataset.y_test)
@@ -95,7 +95,8 @@ class LineModelCtc(Model):
         print('Finished Training')
 
     def loss(self):
-        return CTCLoss # torch_baidu_ctc.CTCLoss converges faster than nn.CTCLoss
+        # return CTCLoss # torch_baidu_ctc.CTCLoss converges faster than nn.CTCLoss
+        return nn.CTCLoss
     
     def optimizer(self):
         return torch.optim.RMSprop
@@ -123,7 +124,7 @@ class LineModelCtc(Model):
                 labels_raw.append(batch_y.to("cpu"))
                 output_lengths = (torch.sum(batch_y != blank_idx, dim=1)).to(torch.long).cpu()
                 
-                loss = self.loss()(average_frames=True, blank=blank_idx, reduction='mean')(log_soft_max, batch_y.cpu(), batch_input_lengths, output_lengths)
+                loss = self.loss()(blank=blank_idx, reduction='mean')(log_soft_max, batch_y.cpu(), batch_input_lengths, output_lengths)
                 running_loss += loss.item()
             # preds_raw: (B, T, C)
             preds_raw, input_lengths = torch.cat(preds_raw), torch.cat(input_lengths)
