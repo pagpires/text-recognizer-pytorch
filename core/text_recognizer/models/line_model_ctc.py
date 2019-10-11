@@ -130,8 +130,6 @@ class LineModelCtc(Model):
             preds_raw, input_lengths = torch.cat(preds_raw), torch.cat(input_lengths)
             labels_raw = torch.cat(labels_raw).numpy() # (B, output_length)
         print(f"Validation loss: {running_loss/(i+1):.4f}")
-        print((torch.argmax(preds_raw, dim=2)!=79).sum())
-        print(torch.argmax(preds_raw, dim=2)[0])
         
         preds = ctc_decode(preds_raw, input_lengths, output_length)
 

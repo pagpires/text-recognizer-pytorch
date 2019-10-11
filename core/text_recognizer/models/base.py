@@ -94,7 +94,7 @@ class Model:
         # plt.plot(total_loss) #@@@@
         # plt.show()
         
-    def evaluate(self, x, y, batch_size=16, verbose=False):
+    def evaluate(self, x, y, batch_size=64, verbose=False):
         val_dl = DatasetSequence(x, y, batch_size=batch_size)
         was_training = self.network.training
         self.network.eval()
