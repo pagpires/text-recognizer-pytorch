@@ -68,14 +68,14 @@ jobs:
           command: |
             source /home/circleci/miniconda/etc/profile.d/conda.sh
             conda activate py36pytorch
-            cd core && PYTHONPATH=. pytest -s text_recognizer/tests/*
+            cd core && PYTHONPATH=. python -m pytest -s text_recognizer/tests/*
 
       - run:
           name: run evaluation tests
           command: |
             source /home/circleci/miniconda/etc/profile.d/conda.sh
             conda activate py36pytorch
-            cd core && PYTHONPATH=. pytest -s evaluation/*
+            cd core && PYTHONPATH=. python -m pytest -s evaluation/*
 
       - store_artifacts:
           path: test-reports

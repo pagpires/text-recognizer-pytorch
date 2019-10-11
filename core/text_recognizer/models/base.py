@@ -115,6 +115,7 @@ class Model:
         
         if was_training:
             self.network.train()
+        print(f"Evaluated: preds: {preds.shape}, labels: {labels.shape}")
         return np.mean(np.argmax(preds, -1) == labels)
 
     def loss(self):

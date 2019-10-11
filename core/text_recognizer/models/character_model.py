@@ -6,13 +6,13 @@ import torch
 
 from text_recognizer.models.base import Model
 from text_recognizer.datasets.emnist_dataset import EmnistDataset
-from text_recognizer.networks.mlp import mlp
+from text_recognizer.networks.lenet import lenet
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 class CharacterModel(Model):
     def __init__(self,
                  dataset_cls: type = EmnistDataset,
-                 network_fn: Callable = mlp,
+                 network_fn: Callable = lenet,
                  dataset_args: Dict = None,
                  network_args: Dict = None):
         """Define the default dataset and network values for this model."""
