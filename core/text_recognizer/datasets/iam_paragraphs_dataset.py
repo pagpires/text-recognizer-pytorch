@@ -21,9 +21,10 @@ class IamParagraphsDataset(Dataset):
     """
     Paragraphs from the IAM dataset.
     """
-    def __init__(self, subsample_fraction: float = None):
+    def __init__(self, load_data: bool = True, subsample_fraction: float = None):
         self.iam_dataset = IamDataset()
-        self.iam_dataset.load_or_generate_data()
+        if load_data:
+            self.iam_dataset.load_or_generate_data()
 
         self.num_classes = 3
         self.input_shape = (256, 256)

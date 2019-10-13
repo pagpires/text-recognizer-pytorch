@@ -15,7 +15,7 @@ import text_recognizer.util as util
 class ParagraphTextRecognizer:
     """Given an image of a single handwritten character, recognizes it."""
     def __init__(self):
-        self.line_detector_model = LineDetectorModel()
+        self.line_detector_model = LineDetectorModel(dataset_args={'load_data': False}) # This function is for prediction, thus don't need the default load_data
         self.line_detector_model.load_weights()
         self.line_predictor_model = LineModelCtc(dataset_cls=IamLinesDataset)
         self.line_predictor_model.load_weights()
