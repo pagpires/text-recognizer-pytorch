@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# pipenv lock --requirements --keep-outdated > api/requirements.txt
-# NOTE: need conda env export > env_pytorch.yml first
+# NOTE: FIRST need conda env export > env_pytorch.yml, then move it to api/env_pytorch.yml
+# replaced PyTorch with cpu version, can also remove unneeded packages like jupyter etc
 
-# sed -i 's/-gpu//g' api/requirements.txt
 docker build -t text_recognizer_api -f api/Dockerfile .
