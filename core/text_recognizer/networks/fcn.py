@@ -13,12 +13,10 @@ class ResidualConvBlock(nn.Module):
     def __init__(self, input_channel, kernel_sizes, num_filters, dilation_rates):
         super(ResidualConvBlock, self).__init__()
         # calculate paddings to ensure same size
-        
         self.x0 = nn.Sequential(
             nn.Conv2d(input_channel, num_filters[0], kernel_sizes[0], dilation=dilation_rates[0], padding=cal_padding(kernel_sizes[0], dilation_rates[0])),
             nn.ReLU()
         )
-        # self.x0 = nn.functional.relu(nn.Conv2d(input_channel, num_filters[0], kernel_sizes[0], padding=cal_padding(kernel_sizes[0], dilation_rates[0])))
         self.x1 = nn.Conv2d(num_filters[0], num_filters[1], kernel_sizes[1], dilation=dilation_rates[1], padding=cal_padding(kernel_sizes[1], dilation_rates[1]))
         self.y = nn.Conv2d(input_channel, num_filters[1], kernel_size=1, padding=cal_padding(1,1))
     
@@ -49,8 +47,6 @@ def fcn(_input_shape: Tuple[int, ...], output_shape: Tuple[int, ...]) -> nn.Modu
             self.layers = nn.Sequential(*layers)
         
         def forward(self, x):
-            # transformation PIL -> toTensor will increase 1 dim, so it's (batch, 1, h, w), so no unsqueeze
-            # ToTensor() will create a channel, it's not included here, so need manual unsqueeze to do from nhw to nchw
             return self.layers(x.unsqueeze(1))
 
     model = Model()

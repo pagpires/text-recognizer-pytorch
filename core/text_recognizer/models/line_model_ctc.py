@@ -1,5 +1,5 @@
 """Define LineModelCtc class and associated functions."""
-from typing import Callable, Dict, Tuple
+from typing import Callable, Dict, Tuple, Optional
 
 import editdistance
 import numpy as np
@@ -95,7 +95,7 @@ class LineModelCtc(Model):
         print('Finished Training')
 
     def loss(self):
-        # return CTCLoss # torch_baidu_ctc.CTCLoss converges faster than nn.CTCLoss
+        # torch_baidu_ctc.CTCLoss converges faster than nn.CTCLoss, here use native CTCLoss for consistency
         return nn.CTCLoss
     
     def optimizer(self):

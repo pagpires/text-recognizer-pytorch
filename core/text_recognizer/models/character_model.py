@@ -21,7 +21,6 @@ class CharacterModel(Model):
     def predict_on_image(self, image: np.ndarray) -> Tuple[str, float]:
         if image.dtype == np.uint8:
             image = (image / 255).astype(np.float32)
-        # NOTE: integer to character mapping dictionary is self.data.mapping[integer]
         with torch.no_grad():
             was_training = self.network.training
             self.network.eval()

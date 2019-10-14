@@ -1,7 +1,6 @@
 """Keras callback for measuring GPU utilization."""
 import gpustat
 import numpy as np
-# from tensorflow.keras.callbacks import Callback
 
 # TODO: implement callback
 class Callback():

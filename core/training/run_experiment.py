@@ -9,7 +9,7 @@ import os
 from training.util import train_model
 
 
-# NOTE should be consistent with base.fit()
+# defaults here should be consistent with base.fit()
 DEFAULT_TRAIN_ARGS = {
     'batch_size': 32,
     'epochs': 10

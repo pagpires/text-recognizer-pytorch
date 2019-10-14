@@ -57,8 +57,6 @@ def line_crnn(input_shape, output_shape):
             if len(x.shape) < 4:
                 x = x.unsqueeze(1) # ensure a channel dim
             conv = self.cnn(x)
-            # _, _, h, _ = conv.size()
-            # assert h == 1, f"the height of conv must be 1, but get {h}"
             conv = conv.squeeze(2)
             conv = conv.permute(2, 0, 1)  # (w, b, c)
             w, b, c = conv.shape

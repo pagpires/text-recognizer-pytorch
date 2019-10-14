@@ -57,11 +57,8 @@ class LineModel(Model):
             if was_training:
                 self.network.train()
 
-        # import pdb; pdb.set_trace()
-        # NOTE trues.shape: (batch, output_length, num_classes)
-        # NOTE preds_raw.shape = (batch, num_classes, output_length)
-        # NOTE keras is nhwc so np.argmax(dim=-1), accordingly pytorch is nchw so np.argmax(dim=1)
-        # trues = np.argmax(labels_raw, -1)
+        # trues.shape: (batch, output_length, num_classes)
+        # preds_raw.shape = (batch, num_classes, output_length)
         trues = torch.cat(labels_raw).numpy()
         preds = np.argmax(preds_raw, 1)
         pred_strings = [''.join(self.data.mapping.get(label, '') for label in pred).strip(' |_') for pred in preds]

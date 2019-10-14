@@ -37,7 +37,7 @@ def line_lstm_ctc(input_shape, output_shape, window_width=28, window_stride=14):
             
             lstm_out, (h_n, c_n) = self.lstm(conv_out) # lstm_out: (T, B, 128)
             out_linear = self.linear(lstm_out) # nn.Linear() allows 3D tensor
-            logsoftmax = nn.functional.log_softmax(out_linear, dim=2) # logsoftmax should be in shape (T, B, classes)
+            logsoftmax = nn.functional.log_softmax(out_linear, dim=2) # logsoftmax should be in shape (T, B, classes) to be consistent with ctc_decode
             input_lengths = torch.Tensor([T] * B).long()
 
             return logsoftmax, input_lengths
