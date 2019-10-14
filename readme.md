@@ -4,7 +4,7 @@
 
 1. Application structure (adapted from [this](https://fullstackdeeplearning.com/march2019)) 
 ![project structure](./assets/structure.png)
-2. Line detection
+2. Line detection (left to right: raw image, true label, predicted label)
 ![detefction](./assets/line_detection.png)
 3. Line prediction
 ![prediction](./assets/line_prediction.png)
