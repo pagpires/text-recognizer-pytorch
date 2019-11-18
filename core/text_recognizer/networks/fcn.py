@@ -1,4 +1,4 @@
-"""Keras network code for the fully-convolutional network used for line detection."""
+"""PyTorch network code for the fully-convolutional network used for line detection."""
 from typing import List, Tuple
 import torch
 from torch import nn
@@ -43,7 +43,7 @@ def fcn(_input_shape: Tuple[int, ...], output_shape: Tuple[int, ...]) -> nn.Modu
                 layers.append(ResidualConvBlock(input_channel, kernel_sizes[i:i+2], num_filters[i:i+2], dilation_rates[i:i+2]))
 
             layers.append(nn.Conv2d(num_filters[-1], num_classes, kernel_size=1, stride=1, padding=cal_padding(1,1), dilation=1))
-            layers.append(nn.LogSoftmax(dim=1))
+            layers.append(nn.LogSoftmax(dim=1)) # explicitly compute prob here b.c. later will be used in prediction
             self.layers = nn.Sequential(*layers)
         
         def forward(self, x):
