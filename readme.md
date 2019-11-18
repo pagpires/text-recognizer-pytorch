@@ -16,7 +16,7 @@ Line detection:
 | network | Pixel Acc |
 | --------|-----------|
 | FCN | 0.928 |
-| UNet | TBD |
+| UNet | 0.954 |
 
 Line Prediction:  
 

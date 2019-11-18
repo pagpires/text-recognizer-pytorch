@@ -1,0 +1,2 @@
+#!/bin/bash
+python training/run_experiment.py --save '{"dataset": "IamParagraphsDataset", "model": "LineDetectorModel", "network": "unet", "train_args": {"batch_size": 12, "epochs": 10, "pretrained": true}}'
