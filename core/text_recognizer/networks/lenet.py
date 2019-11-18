@@ -3,7 +3,7 @@ from typing import Tuple
 from torch import nn
 
 def lenet(input_shape: Tuple[int, ...], output_shape: Tuple[int, ...]) -> nn.Module:
-    """Return LeNet Keras model."""
+    """Return LeNet PyTorch model."""
     num_classes = output_shape[0]
     input_h = input_shape[0]
     input_w = input_shape[1] if len(input_shape)>1 else input_h

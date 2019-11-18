@@ -1,4 +1,4 @@
-"""Keras callback for measuring GPU utilization."""
+"""PyTorch callback for measuring GPU utilization.""" # TODO
 import gpustat
 import numpy as np
 
