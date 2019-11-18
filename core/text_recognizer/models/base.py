@@ -36,9 +36,12 @@ class Model:
         DIRNAME.mkdir(parents=True, exist_ok=True)
         return str(DIRNAME / f'{self.name}_weights.h5')
 
-    def fit(self, dataset, batch_size: int = 32, epochs: int = 10, augment_val: bool = True, callbacks: list = None):
+    def fit(self, dataset, batch_size: int = 32, epochs: int = 10, augment_val: bool = True, callbacks: list = None, **train_args):
         if callbacks is None:
             callbacks = []
+        if train_args.get('pretrained', False):
+            self.load_weights()
+            print('loaded pretrained network')
         
         train_sequence = DatasetSequence(
             dataset.x_train, dataset.y_train, 
@@ -56,7 +59,7 @@ class Model:
         loss_fn_class = self.loss()
         loss_fn = loss_fn_class()
         
-        validation_interval = 4
+        validation_interval = 1
         for epoch in range(epochs):  # loop over the dataset multiple times
             running_loss = 0.0
             for i, batch in enumerate(train_sequence, 0):
