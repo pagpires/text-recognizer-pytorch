@@ -1,0 +1,62 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Python package
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.6]
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: goanpeca/setup-miniconda@v1
+      with:
+        python-version: 3.6
+        channels: pytorch,conda-forge
+    - name: Install Git LFS
+      run: |
+        curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+        sudo apt-get install git-lfs
+        git lfs install
+        git lfs pull
+      
+    - name: Install Shellcheck
+      run: |
+        curl -OL https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz
+        tar xf shellcheck-stable.linux.x86_64.tar.xz
+        sudo mv shellcheck-stable/shellcheck /usr/local/bin
+        
+    - name: Cache env modules
+      uses: actions/cache@v1
+      with:
+        path: ~/miniconda3/pkgs
+        key: ${{ hashFiles("env_pytorch.yml") }}
+
+    - name: install dependencies
+      uses: goanpeca/setup-miniconda@v1
+      with:
+        environment-file: env_pytorch.yml
+        activate-environment: py36pytorch
+        python-version: 3.6
+        channels: pytorch,conda-forge
+
+    - name: run prediction tests
+      shell: bash -l {0}
+      run: |
+        cd core && PYTHONPATH=. python -m pytest -s text_recognizer/tests/*
+
+    - name: run evaluation tests
+      shell: bash -l {0} 
+      run: |
+        cd core && PYTHONPATH=. python -m pytest -s evaluation/*
+
