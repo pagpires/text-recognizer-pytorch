@@ -19,36 +19,23 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: goanpeca/setup-miniconda@v1
+    - uses: goanpeca/setup-miniconda@v1.1.2
       with:
         python-version: 3.6
         channels: pytorch,conda-forge
-    - name: Install Git LFS
-      run: |
-        curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
-        sudo apt-get install git-lfs
-        git lfs install
-        git lfs pull
-      
-    - name: Install Shellcheck
-      run: |
-        curl -OL https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz
-        tar xf shellcheck-stable.linux.x86_64.tar.xz
-        sudo mv shellcheck-stable/shellcheck /usr/local/bin
-        
-    - name: Cache env modules
-      uses: actions/cache@v1
-      with:
-        path: ~/miniconda3/pkgs
-        key: ${{ hashFiles('env_pytorch.yml') }}
+    # - name: Cache env modules
+    #   uses: actions/cache@v1
+    #   with:
+    #     path: ~/miniconda3/pkgs
+    #     key: ${{ hashFiles('env_pytorch.yml') }}
 
-    - name: install dependencies
-      uses: goanpeca/setup-miniconda@v1
-      with:
+    # - name: install dependencies
+    #   uses: goanpeca/setup-miniconda@v1
+    #   with:
         environment-file: env_pytorch.yml
         activate-environment: py36pytorch
-        python-version: 3.6
-        channels: pytorch,conda-forge
+        # python-version: 3.6
+        # channels: pytorch,conda-forge
 
     - name: run prediction tests
       shell: bash -l {0}
