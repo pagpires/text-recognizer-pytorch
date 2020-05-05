@@ -40,7 +40,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ~/miniconda3/pkgs
-        key: ${{ hashFiles("env_pytorch.yml") }}
+        key: ${{ hashFiles('env_pytorch.yml') }}
 
     - name: install dependencies
       uses: goanpeca/setup-miniconda@v1
