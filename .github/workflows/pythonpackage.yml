@@ -23,19 +23,20 @@ jobs:
       with:
         python-version: 3.6
         channels: pytorch,conda-forge
-    # - name: Cache env modules
-    #   uses: actions/cache@v1
-    #   with:
-    #     path: ~/miniconda3/pkgs
-    #     key: ${{ hashFiles('env_pytorch.yml') }}
 
-    # - name: install dependencies
-    #   uses: goanpeca/setup-miniconda@v1
-    #   with:
-        environment-file: env_pytorch.yml
+    - name: Cache env modules
+      uses: actions/cache@v1
+      with:
+        path: ~/miniconda3/pkgs
+        key: ${{ hashFiles('env_pytorch.yml') }}
+
+    - name: install dependencies
+      uses: goanpeca/setup-miniconda@v1
+      with:
+        environment-file: core/api/env_pytorch.yml
         activate-environment: py36pytorch
-        # python-version: 3.6
-        # channels: pytorch,conda-forge
+        python-version: 3.6
+        channels: pytorch,conda-forge
 
     - name: run prediction tests
       shell: bash -l {0}
