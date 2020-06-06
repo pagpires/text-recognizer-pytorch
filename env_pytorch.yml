@@ -168,6 +168,7 @@ dependencies:
   - mkl=2019.4=243
   - pytorch=1.2.0=py3.6_cuda10.0.130_cudnn7.6.2_0
   - torchvision=0.4.0=py36_cu100
+  - black=19.10b0=py36_0
   - pip:
     - nvidia-ml-py3==7.352.0
     - pybind11==2.4.2

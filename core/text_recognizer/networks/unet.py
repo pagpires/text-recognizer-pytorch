@@ -4,10 +4,12 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
+
 def cal_padding(kernel_size, dilation_rate):
     k, d = kernel_size, dilation_rate
-    padding = int( ((k-1)*(d-1)-1+k)/2 )
+    padding = int(((k - 1) * (d - 1) - 1 + k) / 2)
     return padding
+
 
 class DoubleConv(nn.Module):
     """conv -> BN -> ReLU, no shape change"""
@@ -20,11 +22,12 @@ class DoubleConv(nn.Module):
             nn.ReLU(inplace=True),
             nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
             nn.BatchNorm2d(out_channels),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
         )
 
     def forward(self, x):
         return self.double_conv(x)
+
 
 class Down(nn.Module):
     """Downscaling with maxpool then double conv"""
@@ -32,12 +35,12 @@ class Down(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(Down, self).__init__()
         self.maxpool_conv = nn.Sequential(
-            nn.MaxPool2d(2),
-            DoubleConv(in_channels, out_channels)
+            nn.MaxPool2d(2), DoubleConv(in_channels, out_channels)
         )
 
     def forward(self, x):
         return self.maxpool_conv(x)
+
 
 class Up(nn.Module):
     """Upscaling then double conv"""
@@ -47,9 +50,11 @@ class Up(nn.Module):
 
         # if bilinear, use the normal convolutions to reduce the number of channels
         if bilinear:
-            self.up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
+            self.up = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=True)
         else:
-            self.up = nn.ConvTranspose2d(in_channels // 2, in_channels // 2, kernel_size=2, stride=2)
+            self.up = nn.ConvTranspose2d(
+                in_channels // 2, in_channels // 2, kernel_size=2, stride=2
+            )
 
         self.conv = DoubleConv(in_channels, out_channels)
 
@@ -59,8 +64,9 @@ class Up(nn.Module):
         diff_h = x2.shape[2] - x1.shape[2]
         diff_w = x2.shape[3] - x1.shape[3]
 
-        x1 = F.pad(x1, [diff_w // 2, diff_w - diff_w // 2,
-                        diff_h // 2, diff_h - diff_h // 2])
+        x1 = F.pad(
+            x1, [diff_w // 2, diff_w - diff_w // 2, diff_h // 2, diff_h - diff_h // 2]
+        )
         # if you have padding issues, see
         # https://github.com/xiaopeng-liao/Pytorch-UNet/commit/8ebac70e633bac59fc22bb5195e513d5832fb3bd
         x = torch.cat([x2, x1], dim=1)
@@ -74,6 +80,7 @@ class OutConv(nn.Module):
 
     def forward(self, x):
         return self.conv(x)
+
 
 def unet(_input_shape: Tuple[int, ...], output_shape: Tuple[int, ...]) -> nn.Module:
     """Function to instantiate a U-Net for line detection."""
@@ -114,4 +121,3 @@ def unet(_input_shape: Tuple[int, ...], output_shape: Tuple[int, ...]) -> nn.Mod
 
     model = UNet(n_channels=i_channel, n_classes=num_classes)
     return model
-    

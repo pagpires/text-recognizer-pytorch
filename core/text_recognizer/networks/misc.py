@@ -1,5 +1,6 @@
 import torch
 
+
 def slide_window(images, window_width, window_stride):
     """
     Input: (batch, c, h, w)
@@ -11,7 +12,7 @@ def slide_window(images, window_width, window_stride):
     where num_windows is floor((image_width - window_width) / window_stride) + 1
     """
 
-    patches = images.unfold(3, window_width, window_stride) # (b,c,h,p,window)
-    patches = patches.permute((0,1,2,4,3)) # (b,c,h,window,p)
+    patches = images.unfold(3, window_width, window_stride)  # (b,c,h,p,window)
+    patches = patches.permute((0, 1, 2, 4, 3))  # (b,c,h,window,p)
 
     return patches

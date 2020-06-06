@@ -15,8 +15,13 @@ from text_recognizer.networks import fcn
 
 # transformation should happen before ToTensor
 param_dict = {
-    'degrees':(0, 0), 'translate': (0.06, 0.1), 'scale_ranges':(0.9, 1.1), 'shears': (-1.5, 1.5)
+    "degrees": (0, 0),
+    "translate": (0.06, 0.1),
+    "scale_ranges": (0.9, 1.1),
+    "shears": (-1.5, 1.5),
 }
+
+
 def pair_transform(image, mask):
     image, mask = transforms.ToPILImage()(image), transforms.ToPILImage()(mask)
     ret = transforms.RandomAffine.get_params(img_size=image.size, **param_dict)
@@ -26,21 +31,30 @@ def pair_transform(image, mask):
         image, mask = tvf.hflip(image), tvf.hflip(mask)
     return image, mask
 
-trsfm = transforms.Compose([
-    transforms.ToPILImage(),
-    transforms.RandomAffine(degrees=0, translate=(0.06, 0.1), scale=(0.9, 1.1), shear=1.5, fillcolor=0), 
-    transforms.RandomHorizontalFlip(),
-])
+
+trsfm = transforms.Compose(
+    [
+        transforms.ToPILImage(),
+        transforms.RandomAffine(
+            degrees=0, translate=(0.06, 0.1), scale=(0.9, 1.1), shear=1.5, fillcolor=0
+        ),
+        transforms.RandomHorizontalFlip(),
+    ]
+)
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+
 class LineDetectorModel(Model):
     """Model to detect lines of text in an image."""
-    def __init__(self,
-                 dataset_cls: type = IamParagraphsDataset,
-                 network_fn: Callable = fcn,
-                 dataset_args: Dict = None,
-                 network_args: Dict = None):
+
+    def __init__(
+        self,
+        dataset_cls: type = IamParagraphsDataset,
+        network_fn: Callable = fcn,
+        dataset_args: Dict = None,
+        network_args: Dict = None,
+    ):
         """Define the default dataset and network values for this model."""
         super().__init__(dataset_cls, network_fn, dataset_args, network_args)
 
@@ -59,7 +73,11 @@ class LineDetectorModel(Model):
         was_training = self.network.training
         self.network.eval()
         with torch.no_grad():
-            pred = self.network(torch.from_numpy(x).unsqueeze(0).to(device))[0].cpu().numpy()
+            pred = (
+                self.network(torch.from_numpy(x).unsqueeze(0).to(device))[0]
+                .cpu()
+                .numpy()
+            )
         if was_training:
             self.network.train()
 
@@ -75,7 +93,7 @@ class LineDetectorModel(Model):
         with torch.no_grad():
             for batch in val_dl:
                 batch_inputs, batch_labels = batch
-                batch_inputs = batch_inputs.to(device) # no need to move label to GPU
+                batch_inputs = batch_inputs.to(device)  # no need to move label to GPU
 
                 batch_preds = self.network(batch_inputs)
                 preds.append(batch_preds.cpu())
@@ -83,12 +101,12 @@ class LineDetectorModel(Model):
 
         preds = torch.cat(preds).numpy()
         labels = torch.cat(labels).numpy()
-        
+
         if was_training:
             self.network.train()
 
         n, h, w = labels.shape
         # preds: (batch, num_class, h, w); labels: (batch, h, w)
         corrects = np.argmax(preds, axis=1) == labels
-        mean_corrects = np.sum(corrects, axis=(1,2)) / (h*w)
+        mean_corrects = np.sum(corrects, axis=(1, 2)) / (h * w)
         return np.mean(mean_corrects)

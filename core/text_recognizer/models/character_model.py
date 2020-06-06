@@ -9,12 +9,16 @@ from text_recognizer.datasets.emnist_dataset import EmnistDataset
 from text_recognizer.networks.lenet import lenet
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+
 class CharacterModel(Model):
-    def __init__(self,
-                 dataset_cls: type = EmnistDataset,
-                 network_fn: Callable = lenet,
-                 dataset_args: Dict = None,
-                 network_args: Dict = None):
+    def __init__(
+        self,
+        dataset_cls: type = EmnistDataset,
+        network_fn: Callable = lenet,
+        dataset_args: Dict = None,
+        network_args: Dict = None,
+    ):
         """Define the default dataset and network values for this model."""
         super().__init__(dataset_cls, network_fn, dataset_args, network_args)
 
@@ -29,5 +33,6 @@ class CharacterModel(Model):
             ind = np.argmax(pred_raw)
             confidence_of_prediction = np.exp(pred_raw[ind])
             predicted_character = self.data.mapping[ind]
-        if was_training: self.network.train()
+        if was_training:
+            self.network.train()
         return predicted_character, confidence_of_prediction

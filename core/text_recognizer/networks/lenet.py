@@ -2,11 +2,12 @@
 from typing import Tuple
 from torch import nn
 
+
 def lenet(input_shape: Tuple[int, ...], output_shape: Tuple[int, ...]) -> nn.Module:
     """Return LeNet PyTorch model."""
     num_classes = output_shape[0]
     input_h = input_shape[0]
-    input_w = input_shape[1] if len(input_shape)>1 else input_h
+    input_w = input_shape[1] if len(input_shape) > 1 else input_h
 
     class LeNet(nn.Module):
         def __init__(self):
@@ -20,15 +21,15 @@ def lenet(input_shape: Tuple[int, ...], output_shape: Tuple[int, ...]) -> nn.Mod
             layers.append(nn.Dropout(0.2))
             self.conv_layer = nn.Sequential(*layers)
             layers = []
-            self.output_h = (input_h-4)//2
-            self.output_w = (input_w-4)//2
-            layers.append(nn.Linear(64*self.output_h*self.output_w, 128))
+            self.output_h = (input_h - 4) // 2
+            self.output_w = (input_w - 4) // 2
+            layers.append(nn.Linear(64 * self.output_h * self.output_w, 128))
             layers.append(nn.ReLU())
             layers.append(nn.Dropout(0.2))
             layers.append(nn.Linear(128, num_classes))
             layers.append(nn.Softmax(dim=1))
             self.mlp_layer = nn.Sequential(*layers)
-        
+
         def forward(self, x):
             if len(x.shape) < 4:
                 x = x.unsqueeze(dim=1)
