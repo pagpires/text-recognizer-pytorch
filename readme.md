@@ -88,6 +88,16 @@ curl "http://0.0.0.0:8000/v1/predict?image_url=http://s3-us-west-2.amazonaws.com
 
 ### Under development
 -------------
-1. U-Net for line detection
-2. Seq2seq for line prediction
-3. Deployment + simple frontend for interaction
+1. Deployment + simple frontend for interaction
+  1. serverless infra: use SAM instead of serverless+wsgi
+2. refactor: combine (line model: linemodel, ctc, crnn), add pytorch_lightning
+  1. use einops
+  1. how to save model config + weights (save both config and weights will mutate self.network, if no, how to input model config)
+  1. how to include load_data=False for all dataset
+  1. refactor all evaluation step (ctc and crnn have different fit-eval process)
+  2. (DONE) make data, loss, optimizer configurable (model_args)
+  3. enable logging to wandb
+3. U-Net for line detection
+4. Seq2seq for line prediction
+5. Quantization and pruning
+6. CICD: local deploy for test + push and auto build
